@@ -1,0 +1,32 @@
+{
+  "name": "founy-vue-mdeditor",
+  "version": "1.0.0",
+  "description": "vue markdown editor",
+  "main": "src/index.vue",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foooooouny/founy-vue-MdEditor.git"
+  },
+  "author": "zzboy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/foooooouny/founy-vue-MdEditor/issues"
+  },
+  "homepage": "https://github.com/foooooouny/founy-vue-MdEditor#readme",
+  "dependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "markd": "^1.2.0",
+    "vue": "^2.4.2",
+    "vue-scroll": "^2.0.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.5.0"
+  }
+}
