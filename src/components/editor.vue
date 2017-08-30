@@ -29,7 +29,7 @@
         </div>
         <div class="mdBodyContainer" :class="{ noMenu: !navStatus }">
             <div class="editContainer" v-if="editStatus">
-              <textarea name="" class="mdEditor" @keydown.9="tabFn" v-scroll="editScroll" v-model="input"></textarea>
+              <textarea name="" :id="containerId" class="mdEditor" @keydown.9="tabFn" v-scroll="editScroll" v-model="inputVsp"></textarea>
             </div>
             <div class="previewContainer markdown-body" v-scroll="previewScroll" v-html="compiledMarkdown" v-if="previewStatus">
             </div>
@@ -38,56 +38,17 @@
 </template>
 
 <script>
-import '../css/font-awesome.css'
-/* 引入reset文件 */
-import '../css/reset.css'
-/* 引入github的markdown样式文件 */
-import '../css/github_markdown.css'
-/* 引入atom的代码高亮样式文件 */
-import '../css/atom_one_dark.css'
-
-import Vue from 'vue'
 import marked from 'marked'
-import scroll from 'vue-scroll'
-import hljs from '~/assets/mdEditor/js/highlight.js'
-import range from '~/assets/mdEditor/js/rangeFn.js'
-Vue.use(scroll)
+import hljs from '../assets/js/highlight.js'
+import range from '../assets/js/rangeFn.js'
 
-console.log(hljs)
-marked.setOptions({
-  renderer: new marked.Renderer(),
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: true,
-  smartLists: true,
-  smartypants: false,
-  highlight: function (code) {
-    return hljs.highlightAuto(code).value
-  }
-})
-
-function insertContent(val, that) {
-  let textareaDom = document.querySelector('.mdEditor')
-  let value = textareaDom.value
-  let point = range.getCursortPosition(textareaDom)
-  let lastChart = value.substring(point - 1, point)
-  let lastFourCharts = value.substring(point - 4, point)
-  if (lastChart !== '\n' && value !== '' && lastFourCharts !== '    ') {
-    val = '\n' + val
-    range.insertAfterText(textareaDom, val)
-  } else {
-    range.insertAfterText(textareaDom, val)
-  }
-  that.input = document.querySelector('.mdEditor').value
-}
 export default {
-  name: 'markdown',
-  props: ['mdValuesP', 'fullPageStatusP', 'editStatusP', 'previewStatusP', 'navStatusP', 'icoStatusP'],
-  data() {
+  name: 'markdown-editor',
+  props: ['textareaId', 'mdValuesP', 'fullPageStatusP', 'editStatusP', 'previewStatusP', 'navStatusP', 'icoStatusP'],
+  data () {
     return {
-      input: this.mdValuesP || '',
+      containerId: this.textareaId || 'MdEditor',
+      inputVsp: this.mdValuesP || '',
       editStatus: Boolean(this.editStatusP),
       previewStatus: Boolean(this.previewStatusP),
       fullPageStatus: Boolean(this.fullPageStatusP),
@@ -104,8 +65,22 @@ export default {
     }
   },
   methods: {
+    insertContent: function (val) {
+      let textareaDom = document.getElementById(this.containerId)
+      let value = textareaDom.value
+      let point = range.getCursortPosition(textareaDom)
+      let lastChart = value.substring(point - 1, point)
+      let lastFourCharts = value.substring(point - 4, point)
+      if (lastChart !== '\n' && value !== '' && lastFourCharts !== '    ') {
+        val = '\n' + val
+        range.insertAfterText(textareaDom, val)
+      } else {
+        range.insertAfterText(textareaDom, val)
+      }
+      this.inputVsp = document.getElementById(this.containerId).value
+    },
     tabFn: function(evt) {
-      insertContent('    ', this)
+      this.insertContent('    ', this)
       // 屏蔽屌tab切换事件
       if (evt.preventDefault) {
         evt.preventDefault()
@@ -115,7 +90,7 @@ export default {
     },
     addImage: function(evt) {
       setTimeout(() => {
-        insertContent('![Vue](https://cn.vuejs.org/images/logo.png)', this)
+        this.insertContent('![Vue](https://cn.vuejs.org/images/logo.png)', this)
       }, 1000)
     },
     addHTitle: function(index) {
@@ -142,14 +117,14 @@ export default {
         default:
           break
       }
-      insertContent(tmp, this)
+      this.insertContent(tmp, this)
     },
     addCode: function() {
-      let textareaDom = document.querySelector('.mdEditor')
+      let textareaDom = document.getElementById(this.containerId)
       let value = textareaDom.value
       let point = range.getCursortPosition(textareaDom)
       let lastChart = value.substring(point - 1, point)
-      insertContent('```\n\n```', this)
+      this.insertContent('```\n\n```', this)
       if (lastChart !== '\n' && value !== '') {
         range.setCaretPosition(textareaDom, point + 5)
       } else {
@@ -157,11 +132,11 @@ export default {
       }
     },
     addStrikethrough: function() {
-      let textareaDom = document.querySelector('.mdEditor')
+      let textareaDom = document.getElementById(this.containerId)
       let value = textareaDom.value
       let point = range.getCursortPosition(textareaDom)
       let lastChart = value.substring(point - 1, point)
-      insertContent('~~~~', this)
+      this.insertContent('~~~~', this)
       if (lastChart !== '\n' && value !== '') {
         range.setCaretPosition(textareaDom, point + 3)
       } else {
@@ -169,11 +144,11 @@ export default {
       }
     },
     addStrong: function() {
-      let textareaDom = document.querySelector('.mdEditor')
+      let textareaDom = document.getElementById(this.containerId)
       let value = textareaDom.value
       let point = range.getCursortPosition(textareaDom)
       let lastChart = value.substring(point - 1, point)
-      insertContent('****', this)
+      this.insertContent('****', this)
       if (lastChart !== '\n' && value !== '') {
         range.setCaretPosition(textareaDom, point + 3)
       } else {
@@ -181,11 +156,11 @@ export default {
       }
     },
     addItalic: function() {
-      let textareaDom = document.querySelector('.mdEditor')
+      let textareaDom = document.getElementById(this.containerId)
       let value = textareaDom.value
       let point = range.getCursortPosition(textareaDom)
       let lastChart = value.substring(point - 1, point)
-      insertContent('**', this)
+      this.insertContent('**', this)
       if (lastChart !== '\n' && value !== '') {
         range.setCaretPosition(textareaDom, point + 2)
       } else {
@@ -193,21 +168,21 @@ export default {
       }
     },
     setStrong: function() {
-      let textareaDom = document.querySelector('.mdEditor')
+      let textareaDom = document.getElementById(this.containerId)
       let point = range.getCursortPosition(textareaDom)
     },
     addLine: function() {
-      insertContent('\n----\n', this)
+      this.insertContent('\n----\n', this)
     },
     addLink: function() {
-      insertContent('[Vue](https://cn.vuejs.org/images/logo.png)', this)
+      this.insertContent('[Vue](https://cn.vuejs.org/images/logo.png)', this)
     },
     addQuote: function() {
-      let textareaDom = document.querySelector('.mdEditor')
+      let textareaDom = document.getElementById(this.containerId)
       let value = textareaDom.value
       let point = range.getCursortPosition(textareaDom)
       let lastChart = value.substring(point - 1, point)
-      insertContent('> ', this)
+      this.insertContent('> ', this)
       if (lastChart !== '\n' && value !== '') {
         range.setCaretPosition(textareaDom, point + 3)
       } else {
@@ -215,16 +190,16 @@ export default {
       }
     },
     addTable: function() {
-      insertContent('\nheader 1 | header 2\n', this)
-      insertContent('---|---\n', this)
-      insertContent('row 1 col 1 | row 1 col 2\n', this)
-      insertContent('row 2 col 1 | row 2 col 2\n\n', this)
+      this.insertContent('\nheader 1 | header 2\n', this)
+      this.insertContent('---|---\n', this)
+      this.insertContent('row 1 col 1 | row 1 col 2\n', this)
+      this.insertContent('row 2 col 1 | row 2 col 2\n\n', this)
     },
     addUl: function() {
-      insertContent('* ', this)
+      this.insertContent('* ', this)
     },
     addOl: function() {
-      insertContent('1. ', this)
+      this.insertContent('1. ', this)
     },
     previewFn: function() {
       if (!this.editStatus) {
@@ -245,7 +220,7 @@ export default {
     },
     fullPageFn: function() {
       this.fullPageStatus = !this.fullPageStatus
-      let maxEditScrollHeight = document.querySelector('.mdEditor').scrollHeight - document.querySelector('.mdEditor').clientHeight
+      let maxEditScrollHeight = document.getElementById(this.containerId).scrollHeight - document.getElementById(this.containerId).clientHeight
       let maxPreviewScrollHeight = document.querySelector('.previewContainer').scrollHeight - document.querySelector('.previewContainer').clientHeight
       this.maxEditScrollHeight = maxEditScrollHeight
       this.maxPreviewScrollHeight = maxPreviewScrollHeight
@@ -253,7 +228,7 @@ export default {
     previewScroll: function(e, position) {
       if (this.maxEditScrollHeight !== 0) {
         let topPercent = position.scrollTop / this.maxPreviewScrollHeight
-        document.querySelector('.mdEditor').scrollTop = this.maxEditScrollHeight * topPercent
+        document.getElementById(this.containerId).scrollTop = this.maxEditScrollHeight * topPercent
       }
     },
     editScroll: function(e, position) {
@@ -268,24 +243,39 @@ export default {
   },
   computed: {
     compiledMarkdown: function() {
-      return marked(this.input, {
+      return marked(this.inputVsp, {
         sanitize: true
       })
     }
   },
   watch: {
-    input: function() {
+    inputVsp: function() {
       let data = {}
-      data.mdValue = this.input
-      data.htmlValue = marked(this.input, {
+      data.mdValue = this.inputVsp
+      data.htmlValue = marked(this.inputVsp, {
         sanitize: true
       })
       this.$emit('childevent', data)
-      let maxEditScrollHeight = document.querySelector('.mdEditor').scrollHeight - document.querySelector('.mdEditor').clientHeight
+      let maxEditScrollHeight = document.getElementById(this.containerId).scrollHeight - document.getElementById(this.containerId).clientHeight
       let maxPreviewScrollHeight = document.querySelector('.previewContainer').scrollHeight - document.querySelector('.previewContainer').clientHeight
       this.maxEditScrollHeight = maxEditScrollHeight
       this.maxPreviewScrollHeight = maxPreviewScrollHeight
     }
+  },
+  mounted () {
+    marked.setOptions({
+      renderer: new marked.Renderer(),
+      gfm: true,
+      tables: true,
+      breaks: false,
+      pedantic: false,
+      sanitize: true,
+      smartLists: true,
+      smartypants: false,
+      highlight: function (code) {
+        return hljs.highlightAuto(code).value
+      }
+    })
   }
 }
 </script>
@@ -301,60 +291,60 @@ export default {
       left: 0;
       top: 0;
     }
-    .navContainer {
-      width: 100%;
-      height: 36px;
-      background: #fff;
-      box-sizing: border-box;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 0 10px;
-      .nameContainer {
-        color: lightblue;
-        margin-right: 10px;
-        cursor: pointer;
-      }
-      .markContainer {
-        width: auto;
-        height: 100%;
-        margin-left: 0px;
-        ul.markListGroup {
-          height: 100%;
-          width: auto;
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          li.markListItem {
-            list-style: none;
-            width: 20px;
-            height: 20px;
-            margin: 0 2px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 12px;
-            color: #333;
-            &:hover {
-              background: #eee;
-            }
-          }
-        }
-      }
+  }
+  .navContainer {
+    width: 100%;
+    height: 36px;
+    background: #fff;
+    box-sizing: border-box;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10px;
+  }
+  .nameContainer {
+    color: lightblue;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  .markContainer {
+    width: auto;
+    height: 100%;
+    margin-left: 0px;
+  }
+  ul.markListGroup {
+    height: 100%;
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  li.markListItem {
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    margin: 0 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    color: #333;
+    &:hover {
+      background: #eee;
     }
-    .mdBodyContainer {
-      width: 100%;
-      height: calc(100% - 36px);
-      background: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-sizing: border-box;
-      &.noMenu{
-        height: 100%;
-      }
+  }
+  .mdBodyContainer {
+    width: 100%;
+    height: calc(100% - 36px);
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    &.noMenu{
+      height: 100%;
     }
   }
 
@@ -367,14 +357,14 @@ export default {
     background: #333;
     color: #fff;
     padding: 10px;
-    .mdEditor {
-      height: 100%;
-      width: 100%;
-      background: transparent;
-      outline: none;
-      color: #fff;
-      resize: none;
-    }
+  }
+  .mdEditor {
+    height: 100%;
+    width: 100%;
+    background: transparent;
+    outline: none;
+    color: #fff;
+    resize: none;
   }
 
   // 预览区

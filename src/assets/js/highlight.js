@@ -353,7 +353,7 @@ function highlight (name, value, ignoreIllegals, continuation) {
   }
 
   function processKeywords () {
-    var keywordMatch, lastIndex, match, result
+    var keyMatch, lastIndex, match, result
 
     if (!top.keywords) { return escape(modeBuffer) }
 
@@ -364,10 +364,10 @@ function highlight (name, value, ignoreIllegals, continuation) {
 
     while (match) {
       result += escape(modeBuffer.substring(lastIndex, match.index))
-      keywordMatch = keywordMatch(top, match)
-      if (keywordMatch) {
-        relevance += keywordMatch[1]
-        result += buildSpan(keywordMatch[0], escape(match[0]))
+      keyMatch = keywordMatch(top, match)
+      if (keyMatch) {
+        relevance += keyMatch[1]
+        result += buildSpan(keyMatch[0], escape(match[0]))
       } else {
         result += escape(match[0])
       }

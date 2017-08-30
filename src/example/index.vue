@@ -11,7 +11,8 @@
           </div>
         </div>
         <div class="editorContainer">
-          <markdown
+          <Editor
+          :textareaId="textareaId"
           :mdValuesP="msg.mdValue"
           :fullPageStatusP="false"
           :editStatusP="true"
@@ -19,17 +20,18 @@
           :navStatusP="true"
           :icoStatusP="true"
           @childevent="childEventHandler"
-          ></markdown>
+          ></Editor>
         </div>
     </div>
 </template>
 
 <script>
-  import markdown from '../index.vue'
+  import Editor from '../components/editor.vue'
   export default {
     name: 'index',
     data() {
       return {
+        textareaId: 'exampleId',
         msgShow: '我要显示的内容',
         dilogStatus: false,
         msg: {
@@ -38,7 +40,7 @@
       }
     },
     components: {
-      markdown
+      Editor
     },
     methods: {
       childEventHandler: function(res) {
