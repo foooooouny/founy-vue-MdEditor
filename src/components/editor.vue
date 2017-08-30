@@ -283,7 +283,7 @@ export default {
 <style lang="scss">
   .mdContainer {
     width: 100%;
-    height: 100%;
+    height: 500px;
     background: lightblue;
     &.fullPage {
       position: fixed;
@@ -295,7 +295,7 @@ export default {
   .navContainer {
     width: 100%;
     height: 36px;
-    background: #fff;
+    background-color: #F5F5F5;
     box-sizing: border-box;
     border-bottom: 1px solid #eee;
     display: flex;
